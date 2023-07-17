@@ -1,0 +1,7 @@
+@hostname = http://localhost:3333
+
+###
+POST {{hostname}}/auth/login
+
+###
+POST {{hostname}}/auth/signup
