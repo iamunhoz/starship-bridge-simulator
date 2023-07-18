@@ -1,3 +1,6 @@
+# docs
+# https://github.com/Huachao/vscode-restclient
+
 @hostname = http://localhost:3333
 
 ###
@@ -5,3 +8,13 @@ POST {{hostname}}/auth/login
 
 ###
 POST {{hostname}}/auth/signup
+content-type: application/json
+
+{
+    "email": "test@test.com",
+    "password": "a",
+    "dm": "123455"
+}
+
+###
+GET {{hostname}}/auth/get-error
