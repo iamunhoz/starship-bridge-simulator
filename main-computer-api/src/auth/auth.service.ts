@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { AuthDto } from 'src/dtos';
 import * as argon from 'argon2';
@@ -8,10 +12,40 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 @Injectable({})
 export class AuthService {
   constructor(private database: DatabaseService) {}
-  login() {
-    return {
-      msg: 'You have logged in',
-    };
+  blockAccess() {
+    throw new UnauthorizedException({
+      message: 'Invalid credentials',
+    });
+  }
+
+  async login(dto: AuthDto) {
+    try {
+      // find the user by email, throw exception if not found
+      const user = await this.database.user.findUniqueOrThrow({
+        where: {
+          email: dto.email,
+        },
+      });
+
+      //dirty-fast
+      // compare passwords, throw exception if not equal
+      const passwordsMatch = await argon.verify(user.hash, dto.password);
+
+      if (passwordsMatch) {
+        delete user.hash;
+        return user;
+      } else {
+        this.blockAccess();
+      }
+
+      // return the found & authenticated by password user
+    } catch (error) {
+      if (error.code === 'P2025') {
+        this.blockAccess();
+      }
+
+      throw error;
+    }
   }
 
   async signup(dto: AuthDto) {

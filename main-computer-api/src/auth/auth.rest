@@ -7,13 +7,19 @@
 # /auth endpoint
 # used for registration and login
 POST {{hostname}}/auth/login
+content-type: application/json
+
+{
+    "email": "jean-luc-picard-3@officers.fleet",
+    "password": "HeardThroughTheGrapevine"
+}
 
 ###
 POST {{hostname}}/auth/signup
 content-type: application/json
 
 {
-    "email": "jean-luc-picard-3@officers.fleet",
+    "email": "jean-luc-picard-3000@officers.fleet",
     "password": "HeardThroughTheGrapevine"
 }
 
