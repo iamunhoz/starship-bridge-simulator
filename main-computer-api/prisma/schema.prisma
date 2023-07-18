@@ -19,13 +19,42 @@ model User {
   email String @unique
   hash String
   personalData Json?
+  logs Log[]
+
+  @@map("users")
 }
 
 model Room {
   id Int @id @default(autoincrement())
   name String @unique
   description String
+
+  @@map("rooms")
 }
+
+enum LogAccess {
+  PUBLIC
+  PRIVATE
+}
+
+enum LogType {
+  TEXT
+  AUDIO
+  VISUAL
+  AUDIOVISUAL
+}
+
+model Log {
+  id Int @id @default(autoincrement())
+  access LogAccess
+  type LogType
+  text String?
+  data Bytes? // not implemented yet
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
+
+
 
 // model SensorTemperature {
 //   roomId
