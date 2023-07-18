@@ -4,6 +4,8 @@
 @hostname = http://localhost:3333
 
 ###
+# /auth endpoint
+# used for registration and login
 POST {{hostname}}/auth/login
 
 ###
@@ -16,4 +18,9 @@ content-type: application/json
 }
 
 ###
+# endpoint throws error
 GET {{hostname}}/auth/get-error
+
+###
+# /user/everyone gets a list of all registered users
+GET {{hostname}}/user/everyone
