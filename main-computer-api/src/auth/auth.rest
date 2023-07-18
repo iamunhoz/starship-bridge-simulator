@@ -11,9 +11,8 @@ POST {{hostname}}/auth/signup
 content-type: application/json
 
 {
-    "email": "test@test.com",
-    "password": "a",
-    "dm": "123455"
+    "email": "jean-luc-picard-3@officers.fleet",
+    "password": "HeardThroughTheGrapevine"
 }
 
 ###

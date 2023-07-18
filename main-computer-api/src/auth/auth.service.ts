@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { AuthDto } from 'src/dtos';
+import * as argon from 'argon2';
 
 @Injectable({})
 export class AuthService {
@@ -12,11 +13,28 @@ export class AuthService {
     };
   }
 
-  signup(dto: AuthDto) {
-    return {
-      msg: 'You have signed up',
-      dto,
-    };
+  async signup(dto: AuthDto) {
+    // generate password hash
+    const hash = await argon.hash(dto.password);
+    // save new user in database
+    const user = await this.database.user.create({
+      data: {
+        email: dto.email,
+        hash,
+        rank: 'undefined',
+      },
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
+    // somewhere, ranks need to be defined by querying
+    // a third-party database from the federation
+
+    return user;
+    // return new user data from db to clients
   }
 
   getError() {
