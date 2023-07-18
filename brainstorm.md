@@ -3,19 +3,32 @@
 - um backend (api + db) que age como as respostas que o computador da nave oferece. Ex de dados:
 
   - navegação
+
     - atual vetor de direção
       - em relação ao sistema solar
       - em relação à ultima mudança de direção
       - em relação ao centro da galáxia
+
+  - drive
+
+    - força gerada por segundo
+    - quantidade de combustivel disponível
+    - autonomia
+
   - comunicação
+
     - interna (entre tripulantes)
     - externa (outras naves e federação)
+
   - sensores
+
     - internos
+
       - cameras
       - temperatura
       - qualidade do ar
       - riscos biológicos
+
     - externos
       - colisão
       - proximidade
