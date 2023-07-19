@@ -8,14 +8,29 @@ import { DatabaseService } from 'src/database/database.service';
 import { AuthDto } from 'src/dtos';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
+import { getEnvOrThrow } from 'src/utils';
 
 @Injectable({})
 export class AuthService {
-  constructor(private database: DatabaseService) {}
+  constructor(private database: DatabaseService, private jwt: JwtService) {}
   blockAccess() {
     throw new UnauthorizedException({
       message: 'Invalid credentials',
     });
+  }
+  async signToken(userId: number, email: string) {
+    const payload = {
+      sub: userId,
+      email,
+    };
+
+    const signedData = await this.jwt.signAsync(payload, {
+      expiresIn: '15m',
+      secret: getEnvOrThrow('JWT_SECRET'),
+    });
+
+    return signedData;
   }
 
   async login(dto: AuthDto) {
@@ -32,8 +47,11 @@ export class AuthService {
       const passwordsMatch = await argon.verify(user.hash, dto.password);
 
       if (passwordsMatch) {
-        delete user.hash;
-        return user;
+        const signedUser = {
+          access_token: await this.signToken(user.id, user.email),
+        };
+
+        return signedUser;
       } else {
         this.blockAccess();
       }

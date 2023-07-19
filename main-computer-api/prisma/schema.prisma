@@ -44,13 +44,21 @@ enum LogType {
   AUDIOVISUAL
 }
 
+enum LogRealm {
+  PERSONAL
+  OFFICIAL
+}
+
 model Log {
   id Int @id @default(autoincrement())
   access LogAccess
   type LogType
+  realm LogRealm
+
   text String?
   data Bytes? // not implemented yet
   userId Int
+  // cada log é pertinente a um user especifico. userId e o id do user serao o mesmo.
   user User @relation(fields: [userId], references: [id])
 }
 

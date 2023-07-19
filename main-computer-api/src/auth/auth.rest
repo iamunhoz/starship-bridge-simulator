@@ -2,6 +2,7 @@
 # https://github.com/Huachao/vscode-restclient
 
 @hostname = http://localhost:3333
+@jwt_access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiamVhbi1sdWMtcGljYXJkLTMwMDBAb2ZmaWNlcnMuZmxlZXQiLCJpYXQiOjE2ODk3OTMwMjYsImV4cCI6MTY4OTc5MzkyNn0.nO_sKA7IjUml9HmYpR0PLNz2j0fqH-4Fp5epT4-2fgU
 
 ###
 # /auth endpoint
@@ -10,7 +11,7 @@ POST {{hostname}}/auth/login
 content-type: application/json
 
 {
-    "email": "jean-luc-picard-3@officers.fleet",
+    "email": "jean-luc-picard-3000@officers.fleet",
     "password": "HeardThroughTheGrapevine"
 }
 
@@ -27,6 +28,12 @@ content-type: application/json
 # endpoint throws error
 GET {{hostname}}/auth/get-error
 
+# /user
 ###
-# /user/everyone gets a list of all registered users
+# /everyone gets a list of all registered users
 GET {{hostname}}/user/everyone
+
+### /me (guarded by jwt auth)
+GET {{hostname}}/user/me
+Authorization: Bearer {{jwt_access_token}}
+
