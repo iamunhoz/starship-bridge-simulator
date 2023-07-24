@@ -14,11 +14,13 @@ import { getEnvOrThrow } from 'src/utils';
 @Injectable({})
 export class AuthService {
   constructor(private database: DatabaseService, private jwt: JwtService) {}
+
   blockAccess() {
     throw new UnauthorizedException({
       message: 'Invalid credentials',
     });
   }
+
   async signToken(userId: number, email: string) {
     const payload = {
       sub: userId,
@@ -42,7 +44,6 @@ export class AuthService {
         },
       });
 
-      //dirty-fast
       // compare passwords, throw exception if not equal
       const passwordsMatch = await argon.verify(user.hash, dto.password);
 

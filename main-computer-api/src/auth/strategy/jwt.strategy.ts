@@ -1,20 +1,21 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { DatabaseService } from 'src/database/database.service';
-import { getEnvOrThrow } from 'src/utils';
 
+@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private database: DatabaseService) {
+  constructor(config: ConfigService, private database: DatabaseService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: getEnvOrThrow('JWT_SECRET'),
+      secretOrKey: config.get('JWT_SECRET'),
       ignoreExpiration: false,
     });
   }
 
   async validate(payload: { sub: number }) {
-    const me = await this.database.user.findUniqueOrThrow({
+    const user = await this.database.user.findUnique({
       where: { id: payload.sub },
       select: {
         id: true,
@@ -25,10 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       },
     });
 
-    if (!me) {
-      throw new NotFoundException('user not found');
-    }
-
-    return me;
+    return user;
   }
 }

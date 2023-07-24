@@ -1,24 +1,29 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import { EditUserBody, UserService } from './user.service';
+import { JwtGuard } from 'src/auth/guard';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
 
-@Controller('user')
+@UseGuards(JwtGuard)
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/everyone')
+  @Get('everyone')
   getAllUsers() {
     return this.userService.getAllUsers();
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/me')
-  getMe(@Req() req: Request) {
-    console.log('/user/me req', req.user);
+  @Get('me')
+  getMe(@GetUser() user: User) {
+    return user;
+  }
 
-    // const userId = (req.user as { sub: number }).sub;
-    return 'this is me';
-    // return this.userService.getMe(userId);
+  @Put(':id')
+  editUser(@Param('id') id: string, @Body() body: EditUserBody) {
+    console.log('id, req', id, body);
+
+    // return 'in test';
+    return this.userService.editUser(Number(id), body);
   }
 }

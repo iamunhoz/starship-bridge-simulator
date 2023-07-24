@@ -2,17 +2,31 @@
 # https://github.com/Huachao/vscode-restclient
 
 @hostname = http://localhost:3333
-@jwt_access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiamVhbi1sdWMtcGljYXJkLTMwMDBAb2ZmaWNlcnMuZmxlZXQiLCJpYXQiOjE2ODk3OTMwMjYsImV4cCI6MTY4OTc5MzkyNn0.nO_sKA7IjUml9HmYpR0PLNz2j0fqH-4Fp5epT4-2fgU
+@jwt_access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoid29yZl93b19ySXZAb2ZmaWNlcnMuZmxlZXQiLCJpYXQiOjE2OTAyMjE2NzcsImV4cCI6MTY5MDIyMjU3N30.qAvB6dGTTaT9UCZ-7Y8g5sZ4I-FVvye8k0L4pFIhahU
+@id = 5
 
 ###
 # /auth endpoint
 # used for registration and login
+
+# login jean-luc
 POST {{hostname}}/auth/login
 content-type: application/json
 
 {
     "email": "jean-luc-picard-3000@officers.fleet",
     "password": "HeardThroughTheGrapevine"
+}
+
+###
+
+# login worf
+POST {{hostname}}/auth/login
+content-type: application/json
+
+{
+    "email": "worf_wo_rIv@officers.fleet",
+    "password": "KlingonHonor"
 }
 
 ###
@@ -25,15 +39,36 @@ content-type: application/json
 }
 
 ###
-# endpoint throws error
-GET {{hostname}}/auth/get-error
+POST {{hostname}}/auth/signup
+content-type: application/json
+
+{
+    "email": "worf_wo_rIv@officers.fleet",
+    "password": "KlingonHonor"
+}
 
 # /user
 ###
-# /everyone gets a list of all registered users
-GET {{hostname}}/user/everyone
-
-### /me (guarded by jwt auth)
-GET {{hostname}}/user/me
+# /everyone: gets a list of all registered users
+GET {{hostname}}/users/everyone
 Authorization: Bearer {{jwt_access_token}}
 
+### /me: sends self data
+GET {{hostname}}/users/me
+Authorization: Bearer {{jwt_access_token}}
+
+### PUT /:id : updates user
+PUT {{hostname}}/users/{{id}}
+Authorization: Bearer {{jwt_access_token}}
+content-type: application/json
+
+
+{
+    "personalData": {
+        "father": "Mogh"
+    }
+}
+
+###
+# endpoint intentionally throws error for testing
+GET {{hostname}}/auth/get-error
